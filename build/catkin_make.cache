@@ -1,2 +1,0 @@
-
--DCATKIN_DEVEL_PREFIX=/home/user/Desktop/threshold_on_bandpower/devel -DCMAKE_INSTALL_PREFIX=/home/user/Desktop/threshold_on_bandpower/install -G Unix Makefiles
