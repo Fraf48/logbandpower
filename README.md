@@ -1,2 +1,2 @@
-# threshold_on_bandpower
+# logbandpower
 Neurorobotics Homework
