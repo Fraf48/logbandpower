@@ -15,10 +15,8 @@
 		<param name="~devarg" 	  value="$(arg devarg)"/>
 		<param name="~samplerate" value="$(arg samplerate)"/>
 		<param name="~framerate"  value="$(arg framerate)"/>
-
 		<remap from="/neurodata" to="/eeg/raw"/>
 	</node>
-	<node name="neuroviz" pkg="rosneuro_visualizer" type="neuroviz"/> 
 
 	<node name="filterchain_node" pkg="rosneuro_filters" type="filterchain_node" output="screen" >
 		<param name="configname" value="ChainCfgParameters"/>
@@ -26,6 +24,6 @@
 		<remap from="/neurodata_filtered" to="/eeg/filtered"/>
 	</node>
 
-	<remap from="/neurodata_filtered" to="/eeg/filtered"/>
 	<node name="neuroviz2" pkg="rosneuro_visualizer" type="neuroviz"/> 
+	<node name="neuroviz" pkg="rosneuro_visualizer" type="neuroviz"/> 
 </launch>
