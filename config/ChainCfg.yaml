@@ -1,4 +1,4 @@
-ChainCfgTest:
+ChainCfgParameters:
     - name: butterworth-lowpass
       type: rosneuro_filters/ButterworthFilterFloat
       params: 
@@ -11,7 +11,7 @@ ChainCfgTest:
       params: 
         samplerate: 512
         type: highpass
-        order: 6
-        cutoff: 1
+        order: 2
+        cutoff: 6
     - name: car
       type: rosneuro_filters/CarFilterFloat
