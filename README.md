@@ -32,11 +32,9 @@ catkin_make
   
 source devel/setup.bash
 
-4) Lancia questo comando dentro la cartella /ros_ws 
-
 roscore
 
-5) Avvia un altro terminale e lancia
+4) Avvia un altro terminale e lancia
 
 roslaunch logbandpower logbandpower.launch 
 
