@@ -9,9 +9,7 @@ https://drive.google.com/file/d/1uBr5xO4rIT2c4uyMv3Wp68hWRpg_plb_/view?usp=shari
 3) lancia questi comandi per creare una cartella con il worspace e tutto il resto
 
 mkdir -p ros_ws/src
-  
   cd ros_ws
-  
   catkin_make
   
   cd src
