@@ -6,9 +6,10 @@
 	<arg name="framerate" default='16'/>
 	<arg name="samplerate" default='512'/>
 
-	<!-- load filter chain parameters -->
-	<rosparam command="load" file="$(find logbandpower)/config/ChainCfg.yaml" />
+	<!-- filterchain parameters >
+	<rosparam command="load" file="$(find logbandpower)/config/ChainCfg.yaml" /-->
 
+	<!-- acquisition node -->
 	<node name="acquisition" pkg="rosneuro_acquisition" type="acquisition" output="screen">
 		<param name="~plugin" 	  value="$(arg plugin)"/>
 		<param name="~devarg" 	  value="$(arg devarg)"/>
