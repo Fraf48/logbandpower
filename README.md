@@ -24,6 +24,8 @@ catkin_make
   
 source devel/setup.bash
 
+chmod +r src/logbandpower/launch/logbandpower.launch
+
 roscore
 
 
