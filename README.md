@@ -34,6 +34,7 @@ source devel/setup.bash
 
 roscore
 
+
 4) Avvia un altro terminale e lancia
 
 roslaunch logbandpower logbandpower.launch 
