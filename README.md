@@ -16,14 +16,6 @@ catkin_make
   
 cd src
   
-catkin_create_pkg logbandpower std_msgs rospy
-  
-cd ..
-  
-catkin_make 
-
-cd src
-  
 git clone https://github.com/Fraf48/logbandpower.git
   
 cd ..
