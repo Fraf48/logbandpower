@@ -28,6 +28,11 @@
 	</node>
 
     <!-- bandpower node -->
+    <node name="bandpower" pkg="logbandpower" type="bandpower_node" output="screen" >
+		<param name="samplerate" value="$(arg samplerate)"/>
+		<param name="framerate"  value="$(arg framerate)"/>
+	</node>
+
 	<!-- threshold node -->
 	<!-- record node -->
 
