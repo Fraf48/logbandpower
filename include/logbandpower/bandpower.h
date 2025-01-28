@@ -22,8 +22,8 @@ private:
     std::vector<float> bufferedBandPower(const rosneuro_msgs::NeuroFrame::ConstPtr& msg);
 
     // Generates the message to publish
-    std_msgs::Float32MultiArray generateNewMessage(
-        const std::vector<float>& bpvals,
+    rosneuro_msgs::NeuroFrame generateNewMessage(
+        const std::vector<float>& bandpower,
         const rosneuro_msgs::NeuroFrame::ConstPtr& msg
     );
 

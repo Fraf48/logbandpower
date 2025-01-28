@@ -35,8 +35,8 @@
 
 	<!-- threshold node -->
     <node name="thresholding" pkg="logbandpower" type="thresholding_node" output="screen" >
-		<param name="channel" value='1'/>
-		<param name="threshold" value='1.7'/>
+		<param name="channel" value='9'/>
+		<param name="threshold" value='0.7'/>
 	</node>
 
 

@@ -13,7 +13,7 @@ Thresholding::Thresholding(ros::NodeHandle& nh) {
 
 	// Inizializza il publisher per inviare messaggi di tipo NeuroEvent sul topic "/events/bus"
     this->thresholding_pub = nh.advertise<rosneuro_msgs::NeuroEvent>("/events/bus", 1);
-    this->sub = nh.subscribe("/eeg/filtered", 1, &Thresholding::thresholdingCallback, this);
+    this->sub = nh.subscribe("/eeg/bandpower", 1, &Thresholding::thresholdingCallback, this);
 }
 
 void Thresholding::thresholdingCallback(const rosneuro_msgs::NeuroFrame::ConstPtr& msg) {

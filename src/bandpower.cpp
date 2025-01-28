@@ -9,7 +9,7 @@ BandPowerNode::BandPowerNode() : newDataFlag(false), seq(0) {
 
     // Subscriber and Publisher initialization
     sub = nh.subscribe("/eeg/filtered", 1, &BandPowerNode::callback, this);
-    pub = nh.advertise<std_msgs::Float32MultiArray>("/eeg/bandpower", 1);
+    pub = nh.advertise<rosneuro_msgs::NeuroFrame>("/eeg/bandpower", 10);
 
     ROS_INFO("[BandPowerNode] Initialized with sample rate=%d and ring_size=%d", sampleRate, ringSize);
 }
@@ -24,7 +24,7 @@ void BandPowerNode::run() {
         ros::spinOnce();
         if (newDataFlag) {
             std::vector<float> bpvals = bufferedBandPower(currentFrame);
-            std_msgs::Float32MultiArray msg = generateNewMessage(bpvals, currentFrame);
+            rosneuro_msgs::NeuroFrame msg = generateNewMessage(bpvals, currentFrame);
             pub.publish(msg);
             newDataFlag = false;
         }
@@ -94,21 +94,28 @@ std::vector<float> BandPowerNode::bufferedBandPower(const rosneuro_msgs::NeuroFr
     return avgs; 
 }
 
-std_msgs::Float32MultiArray BandPowerNode::generateNewMessage(
+rosneuro_msgs::NeuroFrame BandPowerNode::generateNewMessage(
     const std::vector<float>& bandpower,
     const rosneuro_msgs::NeuroFrame::ConstPtr& oldMsg
 ) {
-    std_msgs::Float32MultiArray newMsg;
+    rosneuro_msgs::NeuroFrame newMsg;
 
-    // layout setup
-    newMsg.layout.dim.resize(1);
-    newMsg.layout.dim[0].label = "height";
-    newMsg.layout.dim[0].size = bandpower.size();
-    newMsg.layout.dim[0].stride = bandpower.size();
-    newMsg.layout.data_offset = 0;
+    // header
+    newMsg.header.stamp = ros::Time::now();
+    newMsg.header.frame_id = "eeg_bandpower";
+
+    newMsg.exg.data.clear();
+    newMsg.tri.data.clear();
+
+
+    // eeg setup
+    newMsg.eeg.info.nchannels = bandpower.size();
+    newMsg.eeg.info.nsamples = 1;
+    newMsg.eeg.info.stride = 1;
+    newMsg.eeg.info.unit = "dB";
 
     // data
-    newMsg.data.insert(newMsg.data.end(), bandpower.begin(), bandpower.end());
+    newMsg.eeg.data = bandpower;
 
     return newMsg;
 }
