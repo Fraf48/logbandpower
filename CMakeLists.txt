@@ -13,6 +13,31 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
 )
 
+catkin_package(
+#  INCLUDE_DIRS include
+#  LIBRARIES logbandpower
+#  CATKIN_DEPENDS roscpp rosneuro_msgs std_msgs
+#  DEPENDS system_lib
+)
+
+include_directories(
+  include
+  ${catkin_INCLUDE_DIRS}
+)
+
+add_executable(thresholding_node src/thresholding.cpp)
+
+target_link_libraries(thresholding_node
+  ${catkin_LIBRARIES}
+)
+
+add_executable(bandpower_node src/bandpower.cpp)
+
+target_link_libraries(bandpower_node 
+  ${catkin_LIBRARIES}
+)
+
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -102,12 +127,6 @@ find_package(catkin REQUIRED COMPONENTS
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES logbandpower
-#  CATKIN_DEPENDS roscpp rosneuro_msgs std_msgs
-#  DEPENDS system_lib
-)
 
 ###########
 ## Build ##
@@ -115,10 +134,7 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(
-  include
-  ${catkin_INCLUDE_DIRS}
-)
+
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
@@ -135,8 +151,6 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/logbandpower_node.cpp)
 
-add_executable(bandpower_node src/bandpower.cpp)
-
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -151,8 +165,6 @@ add_executable(bandpower_node src/bandpower.cpp)
 # target_link_libraries(${PROJECT_NAME}_node
 #   ${catkin_LIBRARIES}
 # )
-target_link_libraries(bandpower_node ${catkin_LIBRARIES})
-
 
 #############
 ## Install ##

@@ -20,7 +20,7 @@
 	</node>
 
 	<!-- filterchain node -->
-    <node name="filterchain_node" pkg="rosneuro_filters" type="filterchain_node" output="screen" >
+    <node name="filterchain" pkg="rosneuro_filters" type="filterchain_node" output="screen" >
 		<param name="configname" value="ChainCfgParameters" />
 
         <remap from="/neurodata" to="/eeg/raw"/>
@@ -34,10 +34,14 @@
 	</node>
 
 	<!-- threshold node -->
+    <node name="thresholding" pkg="logbandpower" type="thresholding_node" output="screen" >
+		<param name="channel" value='1'/>
+		<param name="threshold" value='1.7'/>
+	</node>
+
+
 	<!-- record node -->
 
-
-	<!--node name="neuroviz" pkg="rosneuro_visualizer" type="neuroviz"/--> 
+	<!--  <node name="neuroviz" pkg="rosneuro_visualizer" type="neuroviz"/>	-->
 		
-	
 </launch>
