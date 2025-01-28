@@ -28,11 +28,16 @@
 	</node>
 
     <!-- bandpower node -->
+
 	<!-- threshold node -->
+    <node name="thresholding_node" pkg="logbandpower" type="thresholding" output="screen" >
+		<param name="channel" value='1'/>
+		<param name="threshold" value='1.7'/>
+	</node>
+
+
 	<!-- record node -->
 
-
-	<!--node name="neuroviz" pkg="rosneuro_visualizer" type="neuroviz"/--> 
+	<!--  <node name="neuroviz" pkg="rosneuro_visualizer" type="neuroviz"/>	-->
 		
-	
 </launch>
