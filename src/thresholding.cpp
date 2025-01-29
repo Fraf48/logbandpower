@@ -3,61 +3,67 @@
 #include <iostream>
 
 Thresholding::Thresholding(ros::NodeHandle& nh) {
-    // Lettura dei parametri in ingresso
-    nh.param("channel", this->selected_channel, 1);    // Canale di default: 1
-    nh.param("threshold", this->threshold, 0.7f);       // Soglia di default: 0.7
+    // default value
+    threshold = 0.7;
+    selected_channel = 9;
 
-    // Stampa parametri e soglia selezionati
-    ROS_INFO("Using channel: %d", this->selected_channel);
-    ROS_INFO("Using threshold: %.2f", this->threshold);
+    // getting external parameters if setted
+    ros::param::get("thresholding/threshold", threshold);
+    ros::param::get("thresholding/channel", selected_channel);
+    selected_channel -= 1;    // scaled on [0,nchannels) range
 
-	// Inizializza il publisher per inviare messaggi di tipo NeuroEvent sul topic "/events/bus"
-    this->pub = nh.advertise<rosneuro_msgs::NeuroEvent>("/events/bus", 1);
-    this->sub = nh.subscribe("/eeg/bandpower", 1, &Thresholding::thresholdingCallback, this);
+    // Print selected channel and threshold
+    ROS_INFO("Using channel: %d", selected_channel+1);
+    ROS_INFO("Using threshold: %.2f", threshold);
+
+	// Publisher and Subsriber initialization
+    pub = nh.advertise<rosneuro_msgs::NeuroEvent>("/events/bus", 1);
+    sub = nh.subscribe("/eeg/bandpower", 1, &Thresholding::thresholdingCallback, this);
 }
 
 void Thresholding::thresholdingCallback(const rosneuro_msgs::NeuroFrame::ConstPtr& msg) {
     int nchannels = msg->eeg.info.nchannels;   
     int nsamples = msg->eeg.info.nsamples;
     
-    // Controllo che il canale selezionato sia valido
-    if (this->selected_channel < 0 || this->selected_channel >= nchannels) {
-        ROS_ERROR("Selected channel %d is out of range (1-%d).", this->selected_channel, nchannels);
+    // Checks if selected channel is valid
+    if (selected_channel < 0 || selected_channel >= nchannels) {
+        ROS_ERROR("Selected channel %d is out of range (1-%d).", selected_channel+1, nchannels);
         return;
     }
     
-    // Estrarre i dati del canale selezionato
+    // Extracts data for selected channel
     std::vector<float> channel_data;
     for (size_t s = 0; s < nsamples; s++) {
         // Neuroframe contains data as [samples][channels] in a vector (i.e. s1c1, s1c2, s1c3... s2c1, ...)
-        channel_data.push_back(msg->eeg.data[s * nchannels + this->selected_channel]);
+        channel_data.push_back(msg->eeg.data[s * nchannels + selected_channel]);
     }   
 
-    // Controllo se uno dei campioni supera la soglia
+    // Checks if any sample crosses the threshold and send a NeuroEvent
     bool event_detected = false;
-    for (size_t i = 0; i < msg->eeg.info.nsamples; i++) {
-        if (channel_data[i] > this->threshold) {
-            ROS_INFO("Threshold exceeded on channel %d with threshold %.2f", this->selected_channel, this->threshold);
+    for (size_t i = 0; i < nsamples; i++) {
+        if (channel_data[i] > threshold) {
+            ROS_INFO("Threshold exceeded on channel %d with threshold %.2f", selected_channel+1, threshold);
             rosneuro_msgs::NeuroEvent event_msg = generateMessage(channel_data[i], msg->header.seq);
-            this->pub.publish(event_msg);
+            pub.publish(event_msg);
         }
     }
 }
 
 rosneuro_msgs::NeuroEvent Thresholding::generateMessage(float value, int seq){
     rosneuro_msgs::NeuroEvent event_msg;
-
+    // Set the header
     event_msg.header.stamp = ros::Time::now();
-
+    event_msg.header.frame_id = "eeg_thresholding";
+    // Set description
     char description[100];
-    sprintf(description, "Signal exceeded threshold %.2f on channel %d with value %f at seq %d", this->threshold, this->selected_channel, value, seq);
+    sprintf(description, "Signal exceeded threshold %.2f on channel %d with value %f at seq %d", threshold, selected_channel+1, value, seq);
     event_msg.description = std::string(description);
     return event_msg;
 }
 
 int main(int argc, char** argv) {
     ros::init(argc, argv, "thresholding");
-    ros::NodeHandle nh("~");
+    ros::NodeHandle nh;
 
     Thresholding thresholding_node(nh);
 

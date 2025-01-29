@@ -1,23 +1,25 @@
-#include "logbandpower/bandpower.h"
+#include "../include/logbandpower/bandpower.h"
 #include <numeric>
 #include <cmath>
 
-BandPowerNode::BandPowerNode() : newDataFlag(false), seq(0) {
+BandPower::BandPower() : newDataFlag(false), seq(0) {
     // set variables from parameters
-    nh.param<int>("samplerate", sampleRate, 512);
+    sampleRate = 512;
+    ros::param::get("bandpower/samplerate", sampleRate);
+
     ringSize = sampleRate; // buffer size is 1 second
 
     // Subscriber and Publisher initialization
-    sub = nh.subscribe("/eeg/filtered", 1, &BandPowerNode::callback, this);
-    pub = nh.advertise<rosneuro_msgs::NeuroFrame>("/eeg/bandpower", 10);
+    sub = nh.subscribe("/eeg/filtered", 1, &BandPower::callback, this);
+    pub = nh.advertise<rosneuro_msgs::NeuroFrame>("/eeg/bandpower", 1);
 
     ROS_INFO("[BandPowerNode] Initialized with sample rate=%d and ring_size=%d", sampleRate, ringSize);
 }
 
-void BandPowerNode::run() {
+void BandPower::run() {
     // Elaboration framerate from parameters
-    int framerate;
-    nh.param<int>("framerate", framerate, 16); 
+    int framerate = 16;
+    ros::param::get("bandpower/framerate", framerate);
     ros::Rate r(framerate);
 
     while (ros::ok()) {
@@ -32,13 +34,13 @@ void BandPowerNode::run() {
     }
 }
 
-void BandPowerNode::callback(const rosneuro_msgs::NeuroFrame::ConstPtr& msg) {
+void BandPower::callback(const rosneuro_msgs::NeuroFrame::ConstPtr& msg) {
     // saves data received and set the flag to true
     currentFrame = msg;
     newDataFlag = true;
 }
 
-std::vector<float> BandPowerNode::bufferedBandPower(const rosneuro_msgs::NeuroFrame::ConstPtr& msg) {
+std::vector<float> BandPower::bufferedBandPower(const rosneuro_msgs::NeuroFrame::ConstPtr& msg) {
     int nchannels = msg->eeg.info.nchannels;   
     int nsamples = msg->eeg.info.nsamples;
 
@@ -94,7 +96,7 @@ std::vector<float> BandPowerNode::bufferedBandPower(const rosneuro_msgs::NeuroFr
     return avgs; 
 }
 
-rosneuro_msgs::NeuroFrame BandPowerNode::generateNewMessage(
+rosneuro_msgs::NeuroFrame BandPower::generateNewMessage(
     const std::vector<float>& bandpower,
     const rosneuro_msgs::NeuroFrame::ConstPtr& oldMsg
 ) {
@@ -122,7 +124,7 @@ rosneuro_msgs::NeuroFrame BandPowerNode::generateNewMessage(
 
 int main(int argc, char** argv) {
     ros::init(argc, argv, "bandpower");
-    BandPowerNode bpnode;
+    BandPower bpnode;
     bpnode.run();
     return 0;
 }

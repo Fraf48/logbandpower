@@ -7,10 +7,10 @@
 #include <vector>
 
 // Class to manage the bandpower node
-class BandPowerNode {
+class BandPower {
 public:
-    BandPowerNode();
-    ~BandPowerNode() = default;
+    BandPower();
+    ~BandPower() = default;
 
     void run();
 
@@ -18,10 +18,10 @@ private:
     // Callback function
     void callback(const rosneuro_msgs::NeuroFrame::ConstPtr& msg);
 
-    // Manages buffering and bandpower computing
+    // Function to manage buffering and bandpower computation
     std::vector<float> bufferedBandPower(const rosneuro_msgs::NeuroFrame::ConstPtr& msg);
 
-    // Generates the message to publish
+    // Function to generate the message to publish
     rosneuro_msgs::NeuroFrame generateNewMessage(
         const std::vector<float>& bandpower,
         const rosneuro_msgs::NeuroFrame::ConstPtr& msg

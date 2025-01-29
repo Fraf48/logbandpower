@@ -6,18 +6,22 @@
 #include <rosneuro_msgs/NeuroEvent.h> 
 #include <vector>
 
-// Classe Thresholding per la gestione del superamento soglie su dati EEG
+// Class to manage the threshold node
 class Thresholding {
 public:
     Thresholding(ros::NodeHandle& nh); 
-    void thresholdingCallback(const rosneuro_msgs::NeuroFrame::ConstPtr& msg); // Funzione di callback per elaborare i dati EEG
+
+    // Callback function to elaborate EEG data
+    void thresholdingCallback(const rosneuro_msgs::NeuroFrame::ConstPtr& msg); 
+
+    // Function to generate the message to publish
     rosneuro_msgs::NeuroEvent generateMessage(float value, int seq);
 
 private:
     ros::Publisher pub; 
     ros::Subscriber sub; 
-    int selected_channel;   // Canale EEG selezionato per il controllo della soglia
-    float threshold;        // Valore della soglia per il rilevamento di eventi
+    int selected_channel;   // EEG channnel selected to check the threshold, rangee  [0,nchannels)
+    float threshold;        // Threshold value
 };
 
 #endif
