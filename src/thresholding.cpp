@@ -3,9 +3,13 @@
 #include <iostream>
 
 Thresholding::Thresholding(ros::NodeHandle& nh) {
-    // Lettura dei parametri in ingresso
-    nh.param("channel", this->selected_channel, 1);    // Canale di default: 1
-    nh.param("threshold", this->threshold, 0.7f);       // Soglia di default: 0.7
+    // default value
+    this->threshold = 0.7;
+    this->selected_channel = 9;
+
+    // getting external parameters if setted
+    ros::param::get("thresholding/threshold", this->threshold);
+    ros::param::get("thresholding/channel", this->selected_channel);
 
     // Stampa parametri e soglia selezionati
     ROS_INFO("Using channel: %d", this->selected_channel);
@@ -27,7 +31,7 @@ void Thresholding::thresholdingCallback(const rosneuro_msgs::NeuroFrame::ConstPt
     std::vector<float> channel_data;
     for (size_t i = 0; i < msg->eeg.info.nsamples; i++) {
         // data index = channel selected * number of sample + i
-        channel_data.push_back(msg->eeg.data[this->selected_channel * msg->eeg.info.nsamples + i]);
+        channel_data.push_back(msg->eeg.data[(this->selected_channel - 1)* msg->eeg.info.nsamples + i]);
     }
 
     // Controllo se uno dei campioni supera la soglia
@@ -52,7 +56,7 @@ void Thresholding::thresholdingCallback(const rosneuro_msgs::NeuroFrame::ConstPt
 
 int main(int argc, char** argv) {
     ros::init(argc, argv, "thresholding");
-    ros::NodeHandle nh("~");
+    ros::NodeHandle nh;
 
     Thresholding thresholding_node(nh);
 

@@ -4,20 +4,22 @@
 
 BandPowerNode::BandPowerNode() : newDataFlag(false), seq(0) {
     // set variables from parameters
-    nh.param<int>("samplerate", sampleRate, 512);
-    ringSize = sampleRate; // buffer size is 1 second
+    this->sampleRate = 512;
+    ros::param::get("bandpower/samplerate", this->sampleRate);
+
+    this->ringSize = this->sampleRate; // buffer size is 1 second
 
     // Subscriber and Publisher initialization
-    sub = nh.subscribe("/eeg/filtered", 1, &BandPowerNode::callback, this);
-    pub = nh.advertise<rosneuro_msgs::NeuroFrame>("/eeg/bandpower", 10);
+    this->sub = nh.subscribe("/eeg/filtered", 1, &BandPowerNode::callback, this);
+    this->pub = nh.advertise<rosneuro_msgs::NeuroFrame>("/eeg/bandpower", 1);
 
-    ROS_INFO("[BandPowerNode] Initialized with sample rate=%d and ring_size=%d", sampleRate, ringSize);
+    ROS_INFO("[BandPowerNode] Initialized with sample rate=%d and ring_size=%d", this->sampleRate, this->ringSize);
 }
 
 void BandPowerNode::run() {
     // Elaboration framerate from parameters
-    int framerate;
-    nh.param<int>("framerate", framerate, 16); 
+    int framerate = 16;
+    ros::param::get("bandpower/framerate", framerate);
     ros::Rate r(framerate);
 
     while (ros::ok()) {

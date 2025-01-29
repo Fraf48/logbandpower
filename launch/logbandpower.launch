@@ -41,7 +41,8 @@
 
 
 	<!-- record node -->
+	<node pkg="rosbag" type="record" name="rosbag_record" args="-O recorded_data.bag /eeg/filtered /eeg/bandpower /events/bus" />
 
-	<!--  <node name="neuroviz" pkg="rosneuro_visualizer" type="neuroviz"/>	-->
-		
+  	<!--node name="neuroviz" pkg="rosneuro_visualizer" type="neuroviz"/ -->	
+	
 </launch>
