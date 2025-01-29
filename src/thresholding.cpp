@@ -12,42 +12,47 @@ Thresholding::Thresholding(ros::NodeHandle& nh) {
     ROS_INFO("Using threshold: %.2f", this->threshold);
 
 	// Inizializza il publisher per inviare messaggi di tipo NeuroEvent sul topic "/events/bus"
-    this->thresholding_pub = nh.advertise<rosneuro_msgs::NeuroEvent>("/events/bus", 1);
+    this->pub = nh.advertise<rosneuro_msgs::NeuroEvent>("/events/bus", 1);
     this->sub = nh.subscribe("/eeg/bandpower", 1, &Thresholding::thresholdingCallback, this);
 }
 
 void Thresholding::thresholdingCallback(const rosneuro_msgs::NeuroFrame::ConstPtr& msg) {
+    int nchannels = msg->eeg.info.nchannels;   
+    int nsamples = msg->eeg.info.nsamples;
+    
     // Controllo che il canale selezionato sia valido
-    if (this->selected_channel < 0 || this->selected_channel >= msg->eeg.info.nchannels) {
-        ROS_ERROR("Selected channel %d is out of range (1-%d).", this->selected_channel, msg->eeg.info.nchannels);
+    if (this->selected_channel < 0 || this->selected_channel >= nchannels) {
+        ROS_ERROR("Selected channel %d is out of range (1-%d).", this->selected_channel, nchannels);
         return;
     }
     
     // Estrarre i dati del canale selezionato
     std::vector<float> channel_data;
-    for (size_t i = 0; i < msg->eeg.info.nsamples; i++) {
-        // data index = channel selected * number of sample + i
-        channel_data.push_back(msg->eeg.data[this->selected_channel * msg->eeg.info.nsamples + i]);
-    }
+    for (size_t s = 0; s < nsamples; s++) {
+        // Neuroframe contains data as [samples][channels] in a vector (i.e. s1c1, s1c2, s1c3... s2c1, ...)
+        channel_data.push_back(msg->eeg.data[s * nchannels + this->selected_channel]);
+    }   
 
     // Controllo se uno dei campioni supera la soglia
     bool event_detected = false;
     for (size_t i = 0; i < msg->eeg.info.nsamples; i++) {
         if (channel_data[i] > this->threshold) {
-            event_detected = true;
-            break;
+            ROS_INFO("Threshold exceeded on channel %d with threshold %.2f", this->selected_channel, this->threshold);
+            rosneuro_msgs::NeuroEvent event_msg = generateMessage(channel_data[i], msg->header.seq);
+            this->pub.publish(event_msg);
         }
     }
+}
 
-    // Se viene rilevato un evento pubblica un NeuroEvent
-    if (event_detected) {
-        ROS_INFO("Threshold exceeded on channel %d with threshold %.2f", this->selected_channel, this->threshold);
+rosneuro_msgs::NeuroEvent Thresholding::generateMessage(float value, int seq){
+    rosneuro_msgs::NeuroEvent event_msg;
 
-        rosneuro_msgs::NeuroEvent event_msg;
-        event_msg.description = "Signal exceeded on channel %d with threshold %.2f", this->selected_channel, this->threshold;
+    event_msg.header.stamp = ros::Time::now();
 
-        this->thresholding_pub.publish(event_msg);
-    }
+    char description[100];
+    sprintf(description, "Signal exceeded threshold %.2f on channel %d with value %f at seq %d", this->threshold, this->selected_channel, value, seq);
+    event_msg.description = std::string(description);
+    return event_msg;
 }
 
 int main(int argc, char** argv) {

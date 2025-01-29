@@ -11,9 +11,10 @@ class Thresholding {
 public:
     Thresholding(ros::NodeHandle& nh); 
     void thresholdingCallback(const rosneuro_msgs::NeuroFrame::ConstPtr& msg); // Funzione di callback per elaborare i dati EEG
+    rosneuro_msgs::NeuroEvent generateMessage(float value, int seq);
 
 private:
-    ros::Publisher thresholding_pub; 
+    ros::Publisher pub; 
     ros::Subscriber sub; 
     int selected_channel;   // Canale EEG selezionato per il controllo della soglia
     float threshold;        // Valore della soglia per il rilevamento di eventi
