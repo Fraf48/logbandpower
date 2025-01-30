@@ -5,7 +5,8 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/include/logbandpower",
-                "/opt/ros/noetic/include",
+                "/opt/ros/noetic/include/ros",
+                "/opt/ros/noetic/include/std_msgs",
                 "/home/user/catkin_ws/src/",
                 "${workspaceFolder}/include"
             ],

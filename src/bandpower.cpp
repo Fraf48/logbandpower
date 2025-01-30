@@ -92,7 +92,6 @@ std::vector<float> BandPower::bufferedBandPower(const rosneuro_msgs::NeuroFrame:
             avgs[ch] = sum / ringSize;
         }
     }
-
     return avgs; 
 }
 
@@ -102,19 +101,23 @@ rosneuro_msgs::NeuroFrame BandPower::generateNewMessage(
 ) {
     rosneuro_msgs::NeuroFrame newMsg;
 
+    newMsg.header = oldMsg->header;
+    newMsg.eeg.info = oldMsg->eeg.info;
+    newMsg.sr = oldMsg->sr;
+
     // header
     newMsg.header.stamp = ros::Time::now();
     newMsg.header.frame_id = "eeg_bandpower";
 
-    newMsg.exg.data.clear();
-    newMsg.tri.data.clear();
-
+    // neuroheader
+    //newMsg.neuroheader = oldMsg.neuroheader;
 
     // eeg setup
-    newMsg.eeg.info.nchannels = bandpower.size();
+    newMsg.eeg.info.nchannels = oldMsg->eeg.info.nchannels;
     newMsg.eeg.info.nsamples = 1;
     newMsg.eeg.info.stride = 1;
     newMsg.eeg.info.unit = "dB";
+    newMsg.eeg.info.labels = oldMsg->eeg.info.labels;
 
     // data
     newMsg.eeg.data = bandpower;
