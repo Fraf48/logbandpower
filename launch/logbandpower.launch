@@ -7,7 +7,7 @@
 	<arg name="samplerate" default='512'/>
 
 	<!-- filterchain parameters -->
-	<rosparam command="load" file="$(find logbandpower)/config/ChainCfg.yaml" />
+	<rosparam command="load" file="$(find logbandpower)/config/ChainCfg.yaml"/>
 
 	<!-- acquisition node -->
 	<node name="acquisition" pkg="rosneuro_acquisition" type="acquisition" output="screen">
@@ -20,28 +20,27 @@
 	</node>
 
 	<!-- filterchain node -->
-    <node name="filterchain" pkg="rosneuro_filters" type="filterchain_node" output="screen" >
-		<param name="configname" value="ChainCfgParameters" />
+    <node name="filterchain" pkg="rosneuro_filters" type="filterchain_node" output="screen">
+		<param name="configname" value="ChainCfgParameters"/>
 
         <remap from="/neurodata" to="/eeg/raw"/>
         <remap from="/neurodata_filtered" to="/eeg/filtered"/>
 	</node>
 
     <!-- bandpower node -->
-    <node name="bandpower" pkg="logbandpower" type="bandpower_node" output="screen" >
+    <node name="bandpower" pkg="logbandpower" type="bandpower_node" output="screen">
 		<param name="samplerate" value="$(arg samplerate)"/>
 		<param name="framerate"  value="$(arg framerate)"/>
 	</node>
 
 	<!-- threshold node -->
-    <node name="thresholding" pkg="logbandpower" type="thresholding_node" output="screen" >
+    <node name="thresholding" pkg="logbandpower" type="thresholding_node" output="screen">
 		<param name="channel" value='9'/>
 		<param name="threshold" value='0.4'/>
 	</node>
 
-
 	<!-- record node -->
-	<node pkg="rosbag" type="record" name="rosbag_record" args="-O recorded_data.bag /eeg/filtered /eeg/bandpower /events/bus" />
+	<node name="rosbag" pkg="rosbag" type="record" args="-O /home/user/Downloads/recorded_data.bag /eeg/filtered /eeg/bandpower /events/bus"/>
 
   	<node name="neuroviz" pkg="rosneuro_visualizer" type="neuroviz"/>	
 	
