@@ -84,12 +84,12 @@ std::vector<float> BandPower::bufferedBandPower(const rosneuro_msgs::NeuroFrame:
             for (int i = 0; i < ringSize; i++) {
                 float val = buffer[ch][i];
                 // x^2
-                val = val * val;
-                // log10(x^2)
-                val = std::log10(val + 1e-9); // +1e-9 to avoid log(0)
+                val = val * val;              
                 sum += val;
             }
             avgs[ch] = sum / ringSize;
+            // log10(average)
+            sum = std::log10(sum + 1e-9); // +1e-9 to avoid log(0)
         }
     }
     return avgs; 
