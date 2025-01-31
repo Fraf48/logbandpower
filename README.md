@@ -8,10 +8,10 @@ This project was developed collaboratively, with all team members contributing t
 
 ### Team members of *GruppoGe:*
 
-- De Carlo Claudia
-- De Nicola Francesco
-- Nardin Jaele
-- Tecchio Giulia
+- De Carlo Claudia      2165812 (old ID: 2032567)
+- De Nicola Francesco   2160329
+- Nardin Jaele          2107061
+- Tecchio Giulia        2124345
 
 
 ---
@@ -54,4 +54,3 @@ To run the project, we launch the ROS nodes using:
 ```
 roslaunch logbandpower logbandpower.launch
 ```
-
