@@ -50,7 +50,7 @@ void Thresholding::thresholdingCallback(const rosneuro_msgs::NeuroFrame::ConstPt
             }            
         } else {
             // Once the sample return under the threshold we can keep analyzing the signal and eventually send another NeuroEvent
-            if (channel_data[i] < threshold) {
+            if (channel_data[i] <= threshold) {
                 checkExceeded = false;
             }              
         }
