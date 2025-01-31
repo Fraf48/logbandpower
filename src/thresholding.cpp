@@ -43,13 +43,14 @@ void Thresholding::thresholdingCallback(const rosneuro_msgs::NeuroFrame::ConstPt
     for (size_t i = 0; i < nsamples; i++) {
         if(!checkExceeded){
             if (channel_data[i] > threshold) {
-                ROS_INFO("Signal exceeded threshold %.3f on channel %d with value %f", threshold, selected_channel+1, channel_data[i]);
-                rosneuro_msgs::NeuroEvent event_msg = generateMessage(channel_data[i], msg->header.seq);
+                ROS_INFO("Signal exceeded threshold %.2f on channel %d", threshold, selected_channel+1);
+                rosneuro_msgs::NeuroEvent event_msg = generateMessage();
                 pub.publish(event_msg);
                 checkExceeded = true;
             }            
         } else {
             // Once the sample return under the threshold we can keep analyzing the signal and eventually send another NeuroEvent
+          //  ROS_INFO("Signal with value %f", channel_data[i]);
             if (channel_data[i] <= threshold) {
                 checkExceeded = false;
             }              
@@ -57,14 +58,14 @@ void Thresholding::thresholdingCallback(const rosneuro_msgs::NeuroFrame::ConstPt
     }
 }
 
-rosneuro_msgs::NeuroEvent Thresholding::generateMessage(float value, int seq){
+rosneuro_msgs::NeuroEvent Thresholding::generateMessage(){
     rosneuro_msgs::NeuroEvent event_msg;
     // Set the header
     event_msg.header.stamp = ros::Time::now();
     event_msg.header.frame_id = "eeg_thresholding";
     // Set description
     char description[100];
-    sprintf(description, "Signal exceeded threshold %.3f on channel %d with value %f at seq %d", threshold, selected_channel+1, value, seq);
+    sprintf(description, "Signal exceeded threshold %.2f on channel %d", threshold, selected_channel+1);
     event_msg.description = std::string(description);
     return event_msg;
 }

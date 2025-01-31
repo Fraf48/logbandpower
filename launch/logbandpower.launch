@@ -37,12 +37,12 @@
 	<!-- threshold node -->
     <node name="thresholding" pkg="logbandpower" type="thresholding_node" output="screen">
 		<param name="channel" value='7'/>
-		<param name="threshold" value='7.5'/>
+		<param name="threshold" value='7.35'/>
 	</node>
 
-	<!-- record node -->
+	<!-- record node --> 	
 	<node name="rosbag" pkg="rosbag" type="record" args="-O /home/user/Downloads/recorded_data.bag /eeg/filtered /eeg/bandpower /events/bus"/>
 
-  	<node name="neuroviz" pkg="rosneuro_visualizer" type="neuroviz"/>	
+  	<!--node name="neuroviz" pkg="rosneuro_visualizer" type="neuroviz"/-->	
 	
 </launch>

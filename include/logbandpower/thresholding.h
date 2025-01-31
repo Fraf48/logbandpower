@@ -15,7 +15,7 @@ public:
     void thresholdingCallback(const rosneuro_msgs::NeuroFrame::ConstPtr& msg); 
 
     // Function to generate the message to publish
-    rosneuro_msgs::NeuroEvent generateMessage(float value, int seq);
+    rosneuro_msgs::NeuroEvent generateMessage();
 
 private:
     ros::Publisher pub; 
