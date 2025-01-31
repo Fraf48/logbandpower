@@ -15,6 +15,7 @@
 		<param name="~devarg" 	  value="$(arg devarg)"/>
 		<param name="~samplerate" value="$(arg samplerate)"/>
 		<param name="~framerate"  value="$(arg framerate)"/>
+		<param name="~reopen"  value="false"/>
         
         <remap from="/neurodata" to="/eeg/raw"/>
 	</node>
@@ -35,8 +36,8 @@
 
 	<!-- threshold node -->
     <node name="thresholding" pkg="logbandpower" type="thresholding_node" output="screen">
-		<param name="channel" value='9'/>
-		<param name="threshold" value='0.4'/>
+		<param name="channel" value='7'/>
+		<param name="threshold" value='5.22'/>
 	</node>
 
 	<!-- record node -->
