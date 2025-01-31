@@ -40,7 +40,6 @@ void Thresholding::thresholdingCallback(const rosneuro_msgs::NeuroFrame::ConstPt
     }   
 
     // Checks if any sample crosses the threshold and send a NeuroEvent
-    bool event_detected = false;
     for (size_t i = 0; i < nsamples; i++) {
         if(!checkExceeded){
             if (channel_data[i] > threshold) {
@@ -55,7 +54,6 @@ void Thresholding::thresholdingCallback(const rosneuro_msgs::NeuroFrame::ConstPt
                 checkExceeded = false;
             }              
         }
-
     }
 }
 
