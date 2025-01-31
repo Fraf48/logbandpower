@@ -1,40 +1,57 @@
-# logbandpower
-Neurorobotics Homework
+readme.md
 
-# Come far funzionare tutto
-1) Scarica il file e lascialo nella cartella Downloads, link:
+# **NeuroRobotics Project - Bandpower & Thresholding Nodes**
 
-https://drive.google.com/file/d/1uBr5xO4rIT2c4uyMv3Wp68hWRpg_plb_/view?usp=sharing
+## **Team Contribution**
 
-3) lancia questi comandi per creare una cartella con il worspace e tutto il resto
+This project was developed collaboratively, with all team members contributing to its implementation and refinement.
 
-mkdir -p ros_ws/src
+### Team members of *GruppoGe:*
 
-cd ros_ws
-
-catkin_make
-  
-cd src
-  
-git clone https://github.com/Fraf48/logbandpower.git
-  
-cd ..
-  
-catkin_make
-  
-source devel/setup.bash
-
-chmod +r src/logbandpower/launch/logbandpower.launch
-
-roscore
+- De Carlo Claudia
+- De Nicola Francesco
+- Nardin Jaele
+- Tecchio Giulia
 
 
-4) Avvia un altro terminale e lancia
+---
 
-roslaunch logbandpower logbandpower.launch 
+## **Bandpower Node**
+
+The **bandpower** computation follows a slightly modified approach compared to the official tutorial. Specifically, we **compute the logarithm after averaging**, rather than before.
+
+This decision was based on theoretical insights discussed during lectures, ensuring consistency with the expected methodology.
+
+---
+
+## **Thresholding Node**
+
+The **thresholding** node was designed with **code reusability** in mind.
+Although the **`/eeg/bandpower`** topic **always provides data with `nsamples = 1`**, the implementation **iterates over `nsamples`** to allow the same node to function correctly in scenarios where **`/eeg/bandpower` messages may have different `nsamples` values** in the future.
+
+Additionally, to **prevent redundant event detections**, an event is published **only once per peak**, rather than at every sample exceeding the threshold.
 
 
+### **Channel Selection**
+
+The channel used for thresholding was selected by **computing the Fisher Map in MATLAB**.
+
+//IMMAGINE
+
+This analysis helped identify C3 as the most discriminative EEG channel for our task.
 
 
+### **Threshold Selection**
 
+The **threshold** was determined by **identifying the peaks** in the bandpower signal. The goal was to set a threshold that effectively isolates meaningful fluctuations in the EEG data.
+
+---
+
+## **Usage**
+
+To run the project, we launch the ROS nodes using:
+
+```
+roslaunch logbandpower logbandpower.launch
+```
 
