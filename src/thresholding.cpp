@@ -3,11 +3,12 @@
 #include <iostream>
 
 Thresholding::Thresholding(ros::NodeHandle& nh) {
-    // default value
+    // Default value
     threshold = 0.7;
     selected_channel = 9;
+    checkExceeded = false;
 
-    // getting external parameters if setted
+    // Getting external parameters if setted
     ros::param::get("thresholding/threshold", threshold);
     ros::param::get("thresholding/channel", selected_channel);
     selected_channel -= 1;    // scaled on [0,nchannels) range
@@ -41,11 +42,20 @@ void Thresholding::thresholdingCallback(const rosneuro_msgs::NeuroFrame::ConstPt
     // Checks if any sample crosses the threshold and send a NeuroEvent
     bool event_detected = false;
     for (size_t i = 0; i < nsamples; i++) {
-        if (channel_data[i] > threshold) {
-            ROS_INFO("Signal exceeded threshold %.3f on channel %d with value %f", threshold, selected_channel+1, channel_data[i]);
-            rosneuro_msgs::NeuroEvent event_msg = generateMessage(channel_data[i], msg->header.seq);
-            pub.publish(event_msg);
+        if(!checkExceeded){
+            if (channel_data[i] > threshold) {
+                ROS_INFO("Signal exceeded threshold %.3f on channel %d with value %f", threshold, selected_channel+1, channel_data[i]);
+                rosneuro_msgs::NeuroEvent event_msg = generateMessage(channel_data[i], msg->header.seq);
+                pub.publish(event_msg);
+                checkExceeded = true;
+            }            
+        } else {
+            // Once the sample return under the threshold we can keep analyzing the signal and eventually send another NeuroEvent
+            if (channel_data[i] < threshold) {
+                checkExceeded = false;
+            }              
         }
+
     }
 }
 

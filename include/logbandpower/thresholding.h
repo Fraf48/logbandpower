@@ -22,6 +22,7 @@ private:
     ros::Subscriber sub; 
     int selected_channel;   // EEG channnel selected to check the threshold, rangee  [0,nchannels)
     float threshold;        // Threshold value
+    bool checkExceeded;     // Check if we already have exceeded the threshold
 };
 
 #endif
